@@ -57,10 +57,10 @@ export const SITE = {
     },
     philosophyTitle: "Not more games, better games.",
     philosophyBody:
-      "Blitzcrown is a modern iGaming provider focused on non-traditional, instant-win experiences like crash and plinko. Each title is built on casino game theory and quantitative design ??deep, intuitive, and finished with audio-visual feedback that lands.",
+      "Blitzcrown is a modern iGaming provider focused on non-traditional, instant-win experiences like crash and plinko. Each title is built on casino game theory and quantitative design—deep, intuitive, and finished with audio-visual feedback that lands.",
     latestGamesKicker: "Latest games",
     latestGamesLead:
-      "Original instant win games with unique mechanics and fresh ideas ??not a clone farm.",
+      "Original instant win games with unique mechanics and fresh ideas—not a clone farm.",
     proofsHeading: "Built for operators",
     proofsLead:
       "A dedicated B2B mindset: clean design, strict compliance, and seamless onboarding. Launch fast and scale globally.",
@@ -144,7 +144,7 @@ export const DISTRIBUTION_PARTNERS = [
 export const PARTNER_PROOFS = [
   {
     title: "Single API. Multiple Games",
-    body: "One integration unlocks the full instant-win slate ??crash, plinko, tower, dice, and more.",
+    body: "One integration unlocks the full instant-win slate—crash, plinko, tower, dice, and more.",
   },
   {
     title: "Certified and Licensed",
@@ -156,7 +156,7 @@ export const PARTNER_PROOFS = [
   },
   {
     title: "Mobile and Desktop",
-    body: "The same session quality on both surfaces ??operators do not ship two clients.",
+    body: "The same session quality on both surfaces—operators do not ship two clients.",
   },
 ] as const;
 
@@ -164,7 +164,7 @@ export const ABOUT = {
   hero: "WE ARE BLITZCROWN",
   lead: "Blitzcrown is a modern iGaming provider focused on non-traditional, instant-win experiences like crash and plinko. Our philosophy is simple: Not more games, better games.",
   build: "Each title is developed on a foundation of casino game theory and quantitative design, creating a game flow that is both deep and intuitive. We polish every moment with intuitive audio-visual feedback, ensuring every action lands with clarity and impact.",
-  b2b: "We operate with a dedicated B2B mindset ??prioritizing clean design, strict compliance, and seamless onboarding. With support for all major languages, currencies, and bet-limit configurations, our partners can launch fast and scale globally with confidence.",
+  b2b: "We operate with a dedicated B2B mindset—prioritizing clean design, strict compliance, and seamless onboarding. With support for all major languages, currencies, and bet-limit configurations, our partners can launch fast and scale globally with confidence.",
   rgTitle: "Responsible Gaming",
   rg: "We are strongly committed to responsible gaming. We design our games with fairness and player protection at their core. To ensure full transparency and integrity, our games are certified by reputable, independent testing bodies. We proudly uphold the highest industry standards and regulatory requirements, and are actively working to expand our licensing into new markets to deliver a trusted and sustainable entertainment experience for all.",
   pillars: [
