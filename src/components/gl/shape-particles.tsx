@@ -18,6 +18,8 @@ import {
   SHAPE_LIGHTNING_IDLE_SPIN,
   SHAPE_LIGHTNING_IDLE_WOBBLE,
   SHAPE_LIGHTNING_IDLE_WOBBLE_SPEED,
+  CONTACT_LIGHTNING_PARTICLE_SIZE_MUL,
+  CONTACT_LIGHTNING_SCALE,
   SHAPE_PARTICLE_COUNT,
   SHAPE_PARTICLE_DRIFT_MAX,
   SHAPE_PARTICLE_DRIFT_MIN,
@@ -36,6 +38,8 @@ import {
 } from "@/config/visuals";
 import { SHAPE_MESHES, type ShapeName } from "@/lib/geometry/particle-shapes";
 import { evaluateSample, sampleMeshSurface } from "@/lib/geometry/sample-mesh";
+import { sampleIntroOffscreenSpawn } from "@/lib/particle-plane";
+import { useGlobalStore } from "@/stores/global-store";
 import { useParticleScrollStore } from "@/stores/particle-scroll-store";
 import {
   shapeParticlesFragmentShader,
@@ -55,6 +59,9 @@ type Particle = {
   spawnX: number;
   spawnY: number;
   spawnZ: number;
+  introSpawnX: number;
+  introSpawnY: number;
+  introSpawnZ: number;
   formDelay: number;
   dissolveDelay: number;
   drift: number;
@@ -93,6 +100,13 @@ function smoothstep(edge0: number, edge1: number, x: number) {
   return t * t * (3 - 2 * t);
 }
 
+function lerpAngle(current: number, target: number, t: number) {
+  let delta = target - current;
+  while (delta > Math.PI) delta -= Math.PI * 2;
+  while (delta < -Math.PI) delta += Math.PI * 2;
+  return current + delta * t;
+}
+
 function twinkleAmount(p: Particle, time: number) {
   if (!p.hasTwinkle) return 0;
   const r = time * p.twinkleSpeed + p.twinklePhase;
@@ -124,6 +138,11 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
   const lookTarget = useRef(new THREE.Quaternion());
   const lookDir = useRef(new THREE.Vector3());
   const idleSpinY = useRef(0);
+  /** Locked Y rotation while the mark moves/scales into the contact slot. */
+  const contactRotationY = useRef<number | null>(null);
+  const smoothOffsetX = useRef(0);
+  const smoothOffsetY = useRef(0);
+  const smoothScale = useRef(1);
 
   const size = useThree((s) => s.size);
   const camera = useThree((s) => s.camera);
@@ -198,6 +217,10 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
       const spawnX = (Math.random() - 0.5) * spawnSpread * 2;
       const spawnY = (Math.random() - 0.5) * spawnSpread * 2;
       const spawnZ = (Math.random() - 0.5) * spawnSpread * 0.9;
+      const introSpawn =
+        typeof window !== "undefined"
+          ? sampleIntroOffscreenSpawn(i)
+          : { x: spawnX, y: spawnY, z: spawnZ };
       const hasTwinkle = twinkleFlags[i];
       const isAura = auraFlags[i];
       const baseSize =
@@ -210,8 +233,11 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
         spawnX,
         spawnY,
         spawnZ,
+        introSpawnX: introSpawn.x,
+        introSpawnY: introSpawn.y,
+        introSpawnZ: introSpawn.z,
         formDelay: Math.random() * SHAPE_FORMATION_STAGGER,
-        dissolveDelay: Math.random() * 0.65,
+        dissolveDelay: Math.random() * 0.85,
         drift:
           SHAPE_PARTICLE_DRIFT_MIN +
           Math.random() * (SHAPE_PARTICLE_DRIFT_MAX - SHAPE_PARTICLE_DRIFT_MIN),
@@ -234,9 +260,9 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
         zAmp: 0.08 + Math.random() * 0.18,
       };
 
-      positions[i * 3] = spawnX;
-      positions[i * 3 + 1] = spawnY;
-      positions[i * 3 + 2] = spawnZ;
+      positions[i * 3] = introSpawn.x;
+      positions[i * 3 + 1] = introSpawn.y;
+      positions[i * 3 + 2] = introSpawn.z;
       sizes[i] = baseSize;
       brightness[i] = 0;
       opacity[i] = 0;
@@ -304,8 +330,16 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
 
     const form = formation.current;
 
-    const { dissolve, shapeMorph, geometryScrollRotationY, shapeTarget } =
+    const { dissolve, shapeMorph, geometryScrollRotationY, shapeTarget, geometryScale } =
       useParticleScrollStore.getState();
+    const entranceDone = useGlobalStore.getState().entranceDone;
+    const introOpen = useGlobalStore.getState().introOpen;
+    const heroCoalesceActive = useGlobalStore.getState().heroCoalesceActive;
+
+    const contactParticleMul =
+      geometryScale <= CONTACT_LIGHTNING_SCALE + 0.08
+        ? CONTACT_LIGHTNING_PARTICLE_SIZE_MUL
+        : 1;
 
     const ptr = pointer.current;
     const smoothK = 1 - Math.exp(-16 * delta);
@@ -322,11 +356,21 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
     ptr.prevSmoothY = ptr.smoothY;
     ptr.engagement += ((ptr.active ? 1 : 0) - ptr.engagement) * engageK;
 
+    const inContactSlot = geometryScale <= CONTACT_LIGHTNING_SCALE + 0.12;
+    const atContactRest = inContactSlot && dissolve < 0.1;
+    const contactReforming = inContactSlot && dissolve < 0.95;
+
     if (tiltGroup.current) {
-      const { heroOffsetX } = useParticleScrollStore.getState();
-      tiltGroup.current.position.x = heroOffsetX;
+      const { heroOffsetX, heroOffsetY } = useParticleScrollStore.getState();
+      const travelingToContact = geometryScale < 0.98;
+      const offsetK = 1 - Math.exp(-(travelingToContact ? 14 : 10) * delta);
+      smoothOffsetX.current += (heroOffsetX - smoothOffsetX.current) * offsetK;
+      smoothOffsetY.current += (heroOffsetY - smoothOffsetY.current) * offsetK;
+
+      tiltGroup.current.position.x = smoothOffsetX.current;
+      tiltGroup.current.position.y = smoothOffsetY.current;
       const tiltK = 1 - Math.exp(-SHAPE_GROUP_TILT_SPEED * delta);
-      if (ptr.engagement > 0.001) {
+      if (!contactReforming && ptr.engagement > 0.001) {
         const nx = (ptr.smoothX / (SHAPE_PARTICLE_SCALE * 0.85)) * ptr.engagement;
         const ny = (ptr.smoothY / (SHAPE_PARTICLE_SCALE * 0.85)) * ptr.engagement;
         lookDir.current
@@ -342,20 +386,49 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
     const t = clock.current;
 
     if (spinGroup.current) {
+      const scaleK = 1 - Math.exp(-(atContactRest ? 12 : 9) * delta);
+      smoothScale.current += (geometryScale - smoothScale.current) * scaleK;
+      spinGroup.current.scale.setScalar(smoothScale.current);
+
+      const contactPlacement = atContactRest;
+
+      const contactBlend = smoothstep(
+        CONTACT_LIGHTNING_SCALE + 0.08,
+        CONTACT_LIGHTNING_SCALE,
+        smoothScale.current
+      );
+
       const lightningIdle =
-        shapeTarget === REST_SHAPE
-          ? (1 - smoothstep(0, 0.12, dissolve)) * (1 - smoothstep(0, 0.18, shapeMorph))
+        shapeTarget === REST_SHAPE && !contactPlacement && !contactReforming
+          ? (1 - smoothstep(0, 0.12, dissolve)) *
+            (1 - smoothstep(0, 0.18, shapeMorph)) *
+            (1 - contactBlend)
           : 0;
 
       if (lightningIdle > 0.001) {
         idleSpinY.current += SHAPE_LIGHTNING_IDLE_SPIN * delta * lightningIdle;
       }
 
-      spinGroup.current.rotation.y = geometryScrollRotationY + idleSpinY.current;
-      spinGroup.current.rotation.z =
-        Math.sin(t * SHAPE_LIGHTNING_IDLE_WOBBLE_SPEED) *
-        SHAPE_LIGHTNING_IDLE_WOBBLE *
-        lightningIdle;
+      if (contactReforming) {
+        if (contactRotationY.current === null) {
+          contactRotationY.current = spinGroup.current.rotation.y;
+        }
+        const rotSpeed = atContactRest ? 14 : 4 + (1 - dissolve) * 6;
+        const rotK = 1 - Math.exp(-rotSpeed * delta);
+        contactRotationY.current = lerpAngle(contactRotationY.current, 0, rotK);
+        if (atContactRest && Math.abs(contactRotationY.current) < 0.003) {
+          contactRotationY.current = 0;
+        }
+        spinGroup.current.rotation.y = contactRotationY.current;
+        spinGroup.current.rotation.z = 0;
+      } else {
+        contactRotationY.current = null;
+        spinGroup.current.rotation.y = geometryScrollRotationY + idleSpinY.current;
+        spinGroup.current.rotation.z =
+          Math.sin(t * SHAPE_LIGHTNING_IDLE_WOBBLE_SPEED) *
+          SHAPE_LIGHTNING_IDLE_WOBBLE *
+          lightningIdle;
+      }
     }
 
     const positions = geometry.getAttribute("position") as THREE.BufferAttribute;
@@ -392,7 +465,7 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
       let formedY = my + driftY;
       let formedZ = mz;
 
-      const localDissolve = smoothstep(p.dissolveDelay, p.dissolveDelay + 0.35, dissolve);
+      const localDissolve = smoothstep(p.dissolveDelay, p.dissolveDelay + 0.45, dissolve);
       const formedAmount = (1 - localDissolve) * localForm;
 
       // Aura dust: peel off the silhouette, swirl, drift outward, then loop.
@@ -428,13 +501,18 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
         auraFade = Math.max(0, auraFade);
       }
 
-      let x = formedX + (p.spawnX - formedX) * localDissolve;
-      let y = formedY + (p.spawnY - formedY) * localDissolve;
-      let z = formedZ + (p.spawnZ - formedZ) * localDissolve;
+      const useIntroSpawn = !entranceDone;
+      const sx = useIntroSpawn ? p.introSpawnX : p.spawnX;
+      const sy = useIntroSpawn ? p.introSpawnY : p.spawnY;
+      const sz = useIntroSpawn ? p.introSpawnZ : p.spawnZ;
 
-      x = p.spawnX + (x - p.spawnX) * localForm;
-      y = p.spawnY + (y - p.spawnY) * localForm;
-      z = p.spawnZ + (z - p.spawnZ) * localForm;
+      let x = formedX + (sx - formedX) * localDissolve;
+      let y = formedY + (sy - formedY) * localDissolve;
+      let z = formedZ + (sz - formedZ) * localDissolve;
+
+      x = sx + (x - sx) * localForm;
+      y = sy + (y - sy) * localForm;
+      z = sz + (z - sz) * localForm;
 
       const returnK = 1 - Math.exp(-SHAPE_POINTER_RETURN * delta);
       p.offX += -p.offX * returnK;
@@ -467,7 +545,20 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
       pos[i * 3 + 1] = y + p.offY;
       pos[i * 3 + 2] = z;
 
-      const visibility = localForm * (1 - localDissolve * 0.92) * auraFade;
+      let visibility: number;
+      if (!entranceDone) {
+        if (!introOpen || !heroCoalesceActive) {
+          visibility = 0;
+        } else {
+          const scatter = 1 - localDissolve;
+          const coalesce = 1 - dissolve;
+          const gather = scatter * coalesce;
+          visibility = localForm * gather * auraFade;
+        }
+      } else {
+        visibility = localForm * (1 - localDissolve * 0.92) * auraFade;
+      }
+
       const tw = twinkleAmount(p, t) * SHAPE_PARTICLE_TWINKLE_INTENSITY * 0.35;
       const baseBright = p.isAura
         ? 0.55 + tw * 0.85
@@ -476,7 +567,7 @@ export function ShapeParticles({ shape = REST_SHAPE }: ShapeParticlesProps) {
           : 0.85 + tw;
       bright[i] = baseBright * visibility;
       opac[i] = visibility * (p.isAura ? 0.75 : 1);
-      sizes[i] = p.baseSize * (0.55 + 0.45 * visibility);
+      sizes[i] = p.baseSize * (0.55 + 0.45 * visibility) * contactParticleMul;
     }
 
     positions.needsUpdate = true;

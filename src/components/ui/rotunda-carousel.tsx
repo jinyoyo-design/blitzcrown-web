@@ -143,6 +143,8 @@ export type RotundaCarouselProps = {
   arcSpan?: number;
   /** Size panels so this many fit across the viewport width. */
   fitToWidth?: number;
+  /** Multiplier on fitToWidth panel size (default 1). */
+  fitScale?: number;
   /** Tile images around a full ring for a seamless loop. */
   loop?: boolean;
   /** Auto-spin direction. Drag inertia follows the same direction when set. */
@@ -164,6 +166,7 @@ export function RotundaCarousel({
   speed = 100,
   arcSpan,
   fitToWidth,
+  fitScale = 1,
   loop = false,
   spinDirection = "right",
   cursor,
@@ -191,6 +194,7 @@ export function RotundaCarousel({
     hover,
     arcSpan,
     fitToWidth,
+    fitScale,
     loop,
     spinDirection,
   });
@@ -208,6 +212,7 @@ export function RotundaCarousel({
     hover,
     arcSpan,
     fitToWidth,
+    fitScale,
     loop,
     spinDirection,
   };
@@ -492,7 +497,8 @@ export function RotundaCarousel({
       let pw = Math.max(1, L.panelWidth);
       let ph = Math.max(1, L.panelHeight);
       if (L.fitToWidth && L.fitToWidth > 0 && cssW > 0) {
-        pw = Math.max(56, (cssW / L.fitToWidth) * 0.96);
+        const scale = Math.max(0.25, L.fitScale ?? 1);
+        pw = Math.max(56, (cssW / L.fitToWidth) * 0.96 * scale);
         ph = pw * (L.panelHeight / L.panelWidth);
       }
       const spreadArc = loop ? Math.PI * 2 : L.arcSpan ?? Math.PI * 2;

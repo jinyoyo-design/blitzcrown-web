@@ -8,6 +8,8 @@ import { SplitText } from "gsap/SplitText";
 import { useGlobalStore } from "@/stores/global-store";
 import { useScrollStore } from "@/stores/scroll-store";
 import { preserveScrollDuring, pinHomeScrollIfNeeded } from "@/lib/nav-scroll";
+import { applyHomeHeroParticlePin } from "@/lib/pin-home-hero-particles";
+import { useParticleScrollStore } from "@/stores/particle-scroll-store";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -99,6 +101,7 @@ export function ScrollTextController() {
         ScrollTrigger.refresh();
         requestAnimationFrame(() => ScrollTrigger.refresh());
       });
+      applyHomeHeroParticlePin(useParticleScrollStore.getState().setState);
       pinHomeScrollIfNeeded(useScrollStore.getState().lenis);
     };
 

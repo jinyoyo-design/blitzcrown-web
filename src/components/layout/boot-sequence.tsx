@@ -10,24 +10,28 @@ import { SiteEntrance } from "./site-entrance";
 type Phase = "preload" | "enter" | "done";
 
 /**
- * Owns the load ??open ??hero entrance handoff.
+ * Owns the load → open → hero entrance handoff.
  * Scroll stays locked (`isLoading`) until entrance completes.
  */
 export function BootSequence() {
   const [phase, setPhase] = useState<Phase>("preload");
   const setIsLoading = useGlobalStore((s) => s.setIsLoading);
   const setEntranceDone = useGlobalStore((s) => s.setEntranceDone);
+  const setHeroCoalesceActive = useGlobalStore((s) => s.setHeroCoalesceActive);
+  const setIntroOpen = useGlobalStore((s) => s.setIntroOpen);
 
   const onPreloaderDone = useCallback(() => {
+    setIntroOpen(true);
     setPhase("enter");
-  }, []);
+  }, [setIntroOpen]);
 
   const onEntranceDone = useCallback(() => {
     setPhase("done");
+    setHeroCoalesceActive(false);
     resetScrollTop(useScrollStore.getState().lenis);
     setIsLoading(false);
     setEntranceDone(true);
-  }, [setEntranceDone, setIsLoading]);
+  }, [setEntranceDone, setHeroCoalesceActive, setIsLoading]);
 
   if (phase === "done") return null;
 

@@ -18,7 +18,7 @@ function PartnerMark({ partner }: { partner: Partner }) {
           src={logo}
           alt={name}
           draggable={false}
-          className="h-9 max-w-[150px] object-contain opacity-70 brightness-125 transition-opacity duration-300 group-hover:opacity-100 tablet-portrait:h-10 tablet-portrait:max-w-[170px]"
+          className="h-9 max-w-[150px] object-contain opacity-65 brightness-0 invert transition-opacity duration-300 group-hover:opacity-100 tablet-portrait:h-10 tablet-portrait:max-w-[170px]"
         />
       ) : (
         <span className="heading-5 font-barlow text-brand-05/55 transition-colors duration-300 group-hover:text-brand-05/85">
@@ -62,7 +62,11 @@ export function ContactSection() {
       className="scroll-mt-navbar-height relative z-10 px-8 pt-c-160 pb-c-160 tablet-portrait:px-12 desktop:px-24"
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-c-80">
-        <div id="partners" className="scroll-mt-navbar-height flex flex-col items-center gap-c-32 text-center">
+        <div
+          id="partners"
+          data-geometry="lightning"
+          className="scroll-mt-navbar-height flex flex-col items-center gap-c-32 text-center"
+        >
           <div className="flex flex-col gap-c-8">
             <p className="body-xs text-brand-50 font-barlow font-semibold tracking-[0.22em] uppercase">
               Our partners
@@ -79,9 +83,13 @@ export function ContactSection() {
 
         <div className="border-brand-05/10 border-t" />
 
-        <div className="tablet-landscape:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] grid items-center gap-c-48">
+        <div
+          data-contact-cta-row
+          className="tablet-landscape:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] grid items-start gap-x-c-64 gap-y-c-48"
+        >
           <div
-            className="tablet-landscape:min-h-[22rem] pointer-events-none hidden tablet-landscape:block"
+            data-contact-lightning-anchor
+            className="tablet-landscape:flex tablet-landscape:self-stretch tablet-landscape:items-center tablet-landscape:justify-center pointer-events-none hidden"
             aria-hidden="true"
           />
 
@@ -89,13 +97,18 @@ export function ContactSection() {
             id="contact"
             className="scroll-mt-navbar-height relative z-20 flex flex-col items-center gap-c-24 text-center tablet-landscape:items-start tablet-landscape:text-left"
           >
-            <h2 className="heading-2 font-barlow max-w-130 text-brand-05 leading-[1.05em] tracking-[-0.02em]">
-              {contactCta.title}
-            </h2>
+            <div
+              data-contact-copy-align
+              className="flex w-full max-w-130 flex-col gap-c-24"
+            >
+              <h2 className="heading-2 font-barlow text-brand-05 leading-[1.05em] tracking-[-0.02em]">
+                {contactCta.title}
+              </h2>
 
-            <p className="body-lg max-w-130 text-brand-05/55 leading-[1.65em]">
-              {contactCta.body}
-            </p>
+              <p className="body-lg text-brand-05/55 leading-[1.65em]">
+                {contactCta.body}
+              </p>
+            </div>
 
             <div className="flex w-full max-w-130 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center tablet-landscape:justify-start">
               <a

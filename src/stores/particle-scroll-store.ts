@@ -17,6 +17,10 @@ export type ParticleScrollState = {
   geometryScrollRotationY: number;
   /** Horizontal shift of the hero logo after entrance (world units). */
   heroOffsetX: number;
+  /** Vertical shift on the particle plane (world units). */
+  heroOffsetY: number;
+  /** 1 = hero size; contact resting size is {@link CONTACT_LIGHTNING_SCALE}. */
+  geometryScale: number;
 };
 
 type Store = ParticleScrollState & {
@@ -30,5 +34,7 @@ export const useParticleScrollStore = create<Store>((set) => ({
   dissolve: 1,
   geometryScrollRotationY: 0,
   heroOffsetX: 0,
+  heroOffsetY: 0,
+  geometryScale: 1,
   setState: (partial) => set(partial),
 }));

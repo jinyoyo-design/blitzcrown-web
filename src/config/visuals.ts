@@ -93,3 +93,15 @@ export const SHAPE_LIGHTNING_IDLE_WOBBLE_SPEED = 0.38;
 /** Full turns of the hero geometry from hero through the featured-work handoff. */
 export const GEOMETRY_SCROLL_TURNS = 2;
 export const GEOMETRY_SCROLL_SCRUB = 0.7;
+
+/** Contact CTA lightning — 40% larger than the previous contact resting size. */
+export const CONTACT_LIGHTNING_SCALE = 0.392;
+/** Point size multiplier while the bolt sits in the contact slot. */
+export const CONTACT_LIGHTNING_PARTICLE_SIZE_MUL = 0.5;
+
+/** How far beyond the viewport edge intro dust spawns (fraction of width/height). */
+export const INTRO_OFFSCREEN_MARGIN_MIN = 0.06;
+export const INTRO_OFFSCREEN_MARGIN_MAX = 0.2;
+
+/** Nudge the contact bolt upward so its visual mass aligns with the slot center. */
+export const CONTACT_LIGHTNING_VISUAL_Y_BIAS_PX = 12;

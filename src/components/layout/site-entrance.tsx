@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import gsap from "gsap";
 import { heroLogoOffsetTarget } from "@/lib/hero-logo-offset";
+import { useGlobalStore } from "@/stores/global-store";
 import { useParticleScrollStore } from "@/stores/particle-scroll-store";
 
 type SiteEntranceProps = {
@@ -22,8 +23,9 @@ function showHeroContent(content: HTMLElement) {
 
 /**
  * Post-preloader hero entrance:
- * 1) particles coalesce into a centered lightning logo
- * 2) logo shifts right while copy fades in on the left
+ * 1) scattered particles drift briefly after the panels open
+ * 2) particles coalesce into a centered lightning logo
+ * 3) logo shifts right while copy fades in on the left
  */
 export function SiteEntrance({ active, onComplete }: SiteEntranceProps) {
   useEffect(() => {
@@ -44,11 +46,14 @@ export function SiteEntrance({ active, onComplete }: SiteEntranceProps) {
 
       hideHeroContent(content);
 
+      useGlobalStore.getState().setHeroCoalesceActive(false);
       useParticleScrollStore.getState().setState({
         shapeTarget: "lightning",
         shapeMorph: 0,
         dissolve: 1,
         heroOffsetX: 0,
+        heroOffsetY: 0,
+        geometryScale: 1,
       });
 
       try {
@@ -67,9 +72,18 @@ export function SiteEntrance({ active, onComplete }: SiteEntranceProps) {
 
       tl = gsap.timeline({
         delay: 0.2,
+        onStart: () => {
+          useGlobalStore.getState().setHeroCoalesceActive(true);
+        },
         onComplete: () => {
           showHeroContent(content);
-          useParticleScrollStore.getState().setState({ dissolve: 0, heroOffsetX: offsetTarget });
+          useGlobalStore.getState().setHeroCoalesceActive(false);
+          useParticleScrollStore.getState().setState({
+            dissolve: 0,
+            heroOffsetX: offsetTarget,
+            heroOffsetY: 0,
+            geometryScale: 1,
+          });
           onComplete();
         },
       });
@@ -119,6 +133,7 @@ export function SiteEntrance({ active, onComplete }: SiteEntranceProps) {
 
     return () => {
       killed = true;
+      useGlobalStore.getState().setHeroCoalesceActive(false);
       tl?.kill();
     };
   }, [active, onComplete]);
