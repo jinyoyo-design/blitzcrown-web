@@ -1,0 +1,15 @@
+{
+  "viewport": "1440x900",
+  "notes": "Lightning geometry kept on hero/footer. Measured via Playwright MCP accessibility + getBoundingClientRect/computed styles.",
+  "matched": [
+    "hero padding 40px 96px 80px",
+    "hero shell 0,80 1425x820",
+    "CTA button h=48 pad=0 24 radius=1000 blur=8px bg=white/4",
+    "intro top=1380 h=696",
+    "work top=2076 pad=320px 32px 0 aspect 800x500",
+    "services top=4558.4 h=5400",
+    "process top=9798.4",
+    "display-140 CTA 100px/90px",
+    "footer pad=32px h=820"
+  ]
+}

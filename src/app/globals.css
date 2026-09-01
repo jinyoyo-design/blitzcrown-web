@@ -1,0 +1,457 @@
+@import "tailwindcss";
+
+/* Max-width variants matching the reference (`max-tablet-portrait:…`, etc.). */
+@custom-variant max-mobile-landscape (@media (max-width: 479px));
+@custom-variant max-tablet-portrait (@media (max-width: 767px));
+@custom-variant max-tablet-landscape (@media (max-width: 1023px));
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   Breakpoint names, the brand ramp and the typography scale are ported from
+   the reference build so the markup can use the same utility names.
+--------------------------------------------------------------------------- */
+@theme {
+  --breakpoint-mobile-landscape: 480px;
+  --breakpoint-tablet-portrait: 768px;
+  --breakpoint-tablet-landscape: 1024px;
+  --breakpoint-desktop-sm: 1280px;
+  --breakpoint-desktop: 1440px;
+  --breakpoint-desktop-lg: 1680px;
+  --breakpoint-wide: 1920px;
+  --breakpoint-ultrawide: 2560px;
+
+  --color-brand-05: #f2fffb;
+  --color-brand-10: #b8f5e6;
+  --color-brand-30: #4ddeaf;
+  --color-brand-50: #00ffc2;
+  --color-brand-70: #045a48;
+  --color-brand-90: #031510;
+  --color-brand-100: #010a08;
+
+  --text-body-lg: 18px;
+  --text-body-md: 16px;
+  --text-body-sm: 14px;
+  --text-body-xs: 12px;
+
+  --font-barlow: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-navbar-height: 80px;
+
+  /* Match reference token — Tailwind's default blur-sm is 4px. */
+  --blur-sm: 8px;
+}
+
+/* Fixed rhythm steps used for the tall gaps between sections. */
+@theme {
+  --spacing-c-16: 16px;
+  --spacing-c-24: 24px;
+  --spacing-c-32: 32px;
+  --spacing-c-48: 48px;
+  --spacing-c-80: 80px;
+  --spacing-c-120: 120px;
+  --spacing-c-160: 160px;
+  --spacing-c-240: 240px;
+  --spacing-c-320: 320px;
+  --spacing-c-360: 360px;
+  --spacing-c-480: 480px;
+}
+
+/* ---------------------------------------------------------------------------
+   Layout utilities
+--------------------------------------------------------------------------- */
+@utility container {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+@utility safearea-sm {
+  padding-inline: 16px;
+}
+@utility safearea-md {
+  padding-inline: 32px;
+}
+@utility safearea-lg {
+  padding-inline: 48px;
+}
+
+@utility rounded-circular {
+  border-radius: 1000px;
+}
+
+@utility min-h-hero-screen-height {
+  min-height: calc(100vh - var(--spacing-navbar-height));
+}
+
+@utility max-h-hero-screen-height {
+  max-height: calc(100vh - var(--spacing-navbar-height));
+}
+
+@utility max-w-50vw {
+  max-width: 50vw;
+}
+
+@utility aspect-800\/500 {
+  aspect-ratio: 800 / 500;
+}
+
+@utility aspect-400\/500 {
+  aspect-ratio: 400 / 500;
+}
+
+@utility aspect-480\/260 {
+  aspect-ratio: 480 / 260;
+}
+
+@utility pt-50vh {
+  padding-top: 50vh;
+}
+
+@utility pb-50vh {
+  padding-bottom: 50vh;
+}
+
+@utility -mb-45vh {
+  margin-bottom: -45vh;
+}
+
+/* ---------------------------------------------------------------------------
+   Typography scale
+   Each step ramps at 768 / 1280 / 1680 exactly as in the reference.
+--------------------------------------------------------------------------- */
+@utility display-140 {
+  font-size: 48px;
+  line-height: 0.9em;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-style: italic;
+
+  @media (min-width: 768px) {
+    font-size: 80px;
+  }
+  @media (min-width: 1280px) {
+    font-size: 100px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 140px;
+  }
+}
+
+@utility heading-1 {
+  font-size: 48px;
+  line-height: 0.9em;
+
+  @media (min-width: 768px) {
+    font-size: 64px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 80px;
+  }
+}
+
+@utility heading-2 {
+  font-size: 32px;
+  line-height: 1.1em;
+
+  @media (min-width: 768px) {
+    font-size: 40px;
+  }
+  @media (min-width: 1280px) {
+    font-size: 48px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 64px;
+  }
+}
+
+@utility heading-3 {
+  font-size: 24px;
+  line-height: 1.4em;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+  @media (min-width: 1280px) {
+    font-size: 40px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 48px;
+  }
+}
+
+@utility heading-4 {
+  font-size: 20px;
+  line-height: 1.4em;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
+  @media (min-width: 1280px) {
+    font-size: 32px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 40px;
+  }
+}
+
+@utility heading-5 {
+  font-size: 18px;
+  line-height: 1.4em;
+
+  @media (min-width: 1280px) {
+    font-size: 24px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 32px;
+  }
+}
+
+@utility heading-6 {
+  font-size: 16px;
+  line-height: 1.4em;
+
+  @media (min-width: 1280px) {
+    font-size: 20px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 24px;
+  }
+}
+
+@utility body-xl {
+  line-height: 1.4em;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+  @media (min-width: 1680px) {
+    font-size: 20px;
+  }
+}
+
+@utility body-lg {
+  font-size: var(--text-body-lg);
+  line-height: 1.4em;
+}
+@utility body-md {
+  font-size: var(--text-body-md);
+  line-height: 1.4em;
+}
+@utility body-sm {
+  font-size: var(--text-body-sm);
+  line-height: 1.4em;
+}
+@utility body-xs {
+  font-size: var(--text-body-xs);
+  line-height: 1.4em;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+:root {
+  --radial-1: #00c9a0;
+  --radial-2: #023528;
+  --linear-1: #050505;
+  --linear-2: #031510;
+}
+
+html {
+  background: var(--color-brand-90);
+}
+
+body {
+  background: var(--color-brand-90);
+  color: var(--color-brand-05);
+  font-family: var(--font-barlow), Arial, Helvetica, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html,
+body {
+  overscroll-behavior: none;
+}
+
+/* The site draws its own cursor, so the native one is hidden on precise
+   pointers only — touch devices keep default behaviour. */
+@media (pointer: fine) {
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
+}
+
+/* Shown until the WebGL layer takes over, and behind it as a safety net. */
+.bg-fallback {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at center, var(--radial-1) 0%, transparent 60%),
+    radial-gradient(circle at center, var(--radial-2) 60%, transparent 100%),
+    linear-gradient(180deg, var(--linear-1) 40%, var(--linear-2) 100%);
+  background-position: 0 0, 100% 100%, 0 0;
+  background-repeat: no-repeat;
+  background-size: 120% 120%, 140% 140%, 100% 100%;
+  animation: backgroundFloat 20s ease-in-out infinite;
+}
+
+@keyframes backgroundFloat {
+  0% {
+    background-position: 0 0, 100% 100%, 0 0;
+  }
+  25% {
+    background-position: 20% 15%, 80% 85%, 0 0;
+  }
+  50% {
+    background-position: 40% 30%, 60% 70%, 0 0;
+  }
+  75% {
+    background-position: 20% 15%, 80% 85%, 0 0;
+  }
+  100% {
+    background-position: 0 0, 100% 100%, 0 0;
+  }
+}
+
+.hero-game-loop-frame {
+  opacity: 0;
+  animation-name: heroGameLoopFade;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes heroGameLoopFade {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  8% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  22% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  30% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+/* Hero copy stays hidden until the particle entrance reveals it. */
+.hero-content-pending {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Bottom-center scroll hint on the home hero. */
+.scroll-indicator__mouse {
+  position: relative;
+  width: 22px;
+  height: 36px;
+  border: 1.5px solid color-mix(in srgb, var(--color-brand-05) 32%, transparent);
+  border-radius: 1000px;
+}
+
+.scroll-indicator__wheel {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 3px;
+  height: 7px;
+  border-radius: 1000px;
+  background: var(--color-brand-50);
+  transform: translateX(-50%);
+  animation: scroll-indicator-wheel 1.85s ease-in-out infinite;
+}
+
+.scroll-indicator__inner {
+  animation: scroll-indicator-bob 2.6s ease-in-out infinite;
+}
+
+@keyframes scroll-indicator-wheel {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(10px);
+  }
+  55% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(14px);
+  }
+  56% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes scroll-indicator-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-indicator__wheel,
+  .scroll-indicator__inner {
+    animation: none;
+  }
+
+  .scroll-indicator__wheel {
+    opacity: 0.85;
+    transform: translateX(-50%) translateY(6px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Lenis
+--------------------------------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+html.scroll-locked,
+html.scroll-locked body {
+  touch-action: none;
+  overscroll-behavior: none !important;
+  overflow: hidden !important;
+}
+
+.js-s-lines .overflow-hidden,
+.s-split-lines .overflow-hidden {
+  display: block;
+  overflow: hidden;
+}

@@ -1,0 +1,25 @@
+# dependencies
+node_modules
+
+# next.js
+.next
+out
+
+# build / cache
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# env / secrets
+.env
+.env.*
+
+# debug / tooling
+.playwright-mcp
+.claude
+
+# os
+.DS_Store
+Thumbs.db
+
+# local screenshots (optional)
+blitzcrown-home.png
