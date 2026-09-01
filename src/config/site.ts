@@ -55,9 +55,6 @@ export const SITE = {
       linkedInLabel: "Connect on LinkedIn",
       linkedInUrl: "https://www.linkedin.com/company/massive-gaming",
     },
-    philosophyTitle: "Not more games, better games.",
-    philosophyBody:
-      "Blitzcrown is a modern iGaming provider focused on non-traditional, instant-win experiences like crash and plinko. Each title is built on casino game theory and quantitative design—deep, intuitive, and finished with audio-visual feedback that lands.",
     latestGamesKicker: "Latest games",
     latestGamesLead:
       "Original instant win games with unique mechanics and fresh ideas—not a clone farm.",
