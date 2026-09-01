@@ -72,7 +72,7 @@ export const FOOTER = {
       links: [
         { label: "Games", href: "/games" },
         { label: "Genres", href: "/games" },
-        { label: "Why Us", href: "/#studio" },
+        { label: "Why Us", href: "/#home" },
       ],
     },
     {

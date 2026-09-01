@@ -8,7 +8,7 @@ export const PENDING_HASH_KEY = "bc-pending-hash";
 /** About Us lives on the hero; legacy `#about` hashes must not scroll mid-page. */
 export function normalizeNavHash(hash: string): string {
   const id = hash.startsWith("#") ? hash.slice(1) : hash;
-  if (!id || id === "home" || id === "about") return "#home";
+  if (!id || id === "home" || id === "about" || id === "studio") return "#home";
   return `#${id}`;
 }
 

@@ -58,7 +58,6 @@ export function ContactSection() {
 
   return (
     <section
-      id="contact"
       data-hero-offset="left"
       className="scroll-mt-navbar-height relative z-10 px-8 pt-c-160 pb-c-160 tablet-portrait:px-12 desktop:px-24"
     >
@@ -86,7 +85,10 @@ export function ContactSection() {
             aria-hidden="true"
           />
 
-          <div className="relative z-20 flex flex-col items-center gap-c-24 text-center tablet-landscape:items-start tablet-landscape:text-left">
+          <div
+            id="contact"
+            className="scroll-mt-navbar-height relative z-20 flex flex-col items-center gap-c-24 text-center tablet-landscape:items-start tablet-landscape:text-left"
+          >
             <h2 className="heading-2 font-barlow max-w-130 text-brand-05 leading-[1.05em] tracking-[-0.02em]">
               {contactCta.title}
             </h2>
