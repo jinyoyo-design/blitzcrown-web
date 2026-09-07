@@ -26,7 +26,10 @@ export function FeaturedWork() {
     <section
       id="latest-games"
       data-geometry="lightning"
-      className="-mt-c-80 scroll-mt-navbar-height pt-c-120 flex flex-col"
+      data-dissolve="in"
+      data-start="bottom 100%"
+      data-end="bottom -50%"
+      className="-mt-c-80 scroll-mt-navbar-height pt-c-120 flex flex-col gap-c-48"
     >
       <div className="container mx-auto flex max-w-160 flex-col items-center gap-c-16 px-8 text-center tablet-portrait:safearea-lg">
         <h2 className="js-s-lines body-md uppercase">{SITE.copy.latestGamesKicker}</h2>
@@ -41,7 +44,7 @@ export function FeaturedWork() {
         </GlassButtonLink>
       </div>
 
-      <div className="relative -mt-[200px] h-[min(52vw,580px)] min-h-[400px] w-full tablet-portrait:h-[min(48vw,640px)] tablet-portrait:min-h-[440px] desktop:h-[min(44vw,700px)]">
+      <div className="relative z-10 h-[min(72vw,879px)] min-h-[473px] w-full pointer-events-auto tablet-portrait:h-[min(66vw,946px)] tablet-portrait:min-h-[541px] desktop:h-[min(58vw,1048px)]">
         <RotundaCarousel
           images={LATEST_GAMES.map((game) => ({ image: game.image }))}
           panelWidth={CAROUSEL_PANEL_WIDTH}
